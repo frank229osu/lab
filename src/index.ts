@@ -1,10 +1,12 @@
 document.getElementById('selectedValue').onchange = newTip;
 document.getElementById('total').oninput = runCalcs;
+let tipValue = document.getElementById('selectedValue') as HTMLInputElement;
 
 function newTip() {
-    const tipValue = document.getElementById('selectedValue') as HTMLInputElement;
+    tipValue = document.getElementById('selectedValue') as HTMLInputElement;
     document.getElementById('chosenTip').innerHTML = `You've chosen to tip ${tipValue.value}%`;
     document.getElementById('tipPercent').innerHTML = `Tip percent: ${tipValue.value}%`;
+    saveIt();
 }
 
 function runCalcs() {
@@ -16,4 +18,8 @@ function runCalcs() {
 
     document.getElementById('tipAmount').innerHTML = `Amount of tip: $${tipAmount}`;
     document.getElementById('totalPaid').innerHTML = `Total to be paid: $${totalPaid}`;
+}
+
+function saveIt() {
+    localStorage.setItem('YourTip', tipValue.value);
 }
