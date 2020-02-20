@@ -3,16 +3,32 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Front End Web 100</title>
+    <title>Tip Calculator</title>
 </head>
 
 <body>
     <header>
-        <h1>Front End Web 100 Starter</h1>
-        <h2>Progressive ITU</h2>
+        <h1>Tip Calculator</h1>
     </header>
-    <main>
-        
+    <main class="container">
+        <div class="form-group">
+            <label for="item">Bill total</label>
+            <input name="item"
+                   id="total">
+
+            <select name='tip'
+                    id='selectedValue'>
+                <option value='blank'>Choose a tip</option>
+                <option value=10>10</option>
+                <option value=15>15</option>
+                <option value=20>20</option>
+            </select>
+            <div id='chosenTip'>You've chosen to tip __%</div>
+            <div id='billAmount'>Bill Amount: $START</div>
+            <div id='tipPercent'>Tip percent: START%</div>
+            <div id='tipAmount'>Amount of tip: $START</div>
+            <div id='totalPaid'>Total to be paid: $START</div>
+
     </main>
 </body>
 
