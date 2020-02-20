@@ -5,8 +5,11 @@ let tipValue = document.getElementById('selectedValue') as HTMLInputElement;
 const storedTip = localStorage.getItem('yourTipChoice');
 
 if (storedTip) {
-    document.getElementById('selectedValue').setAttribute(tipValue.value, storedTip);
-}
+    document.getElementById('chosenTip').innerHTML = `You chose to tip: ${storedTip}%`;
+    const indexValue = tipValue.nodeValue;
+    tipValue.remove;
+} /// pick the right node to remove.
+
 
 function onBillChange() {
     const inputValue = document.getElementById('total') as HTMLInputElement;
@@ -31,6 +34,7 @@ function onTipChange() {
     const tipPercentAsNumber: number = parseInt(tipPercent.value) / 100;
 
     updateChosenTip(tipPercentAsNumber);
+    saveIt(tipPercent.value);
 
     if (inputValueAsNumber > 0) {
 
@@ -38,7 +42,7 @@ function onTipChange() {
         updateTipPercent(tipPercentAsNumber);
         updateTipAmount(inputValueAsNumber, tipPercentAsNumber);
         updateTotalPaid(inputValueAsNumber, tipPercentAsNumber);
-        saveIt();
+
     }
 }
 
@@ -63,6 +67,6 @@ function updateTotalPaid(inputValueAsNumber: number, tipPercentAsNumber: number)
     document.getElementById('totalPaid').innerHTML = `Total to be paid: $${totalValue}`;
 }
 
-function saveIt() {
-    localStorage.setItem('yourTipChoice', tipValue.value);
+function saveIt(tipPercent: string) {
+    localStorage.setItem('yourTipChoice', tipPercent);
 }
