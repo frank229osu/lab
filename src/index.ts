@@ -1,14 +1,10 @@
 document.getElementById('selectedValue').onchange = onTipChange;
 document.getElementById('total').oninput = onBillChange;
+const addButton = document.getElementById('addButton') as HTMLInputElement;
 let tipValue = document.getElementById('selectedValue') as HTMLInputElement;
 
 const storedTip = localStorage.getItem('yourTipChoice');
 
-if (storedTip) {
-    document.getElementById('chosenTip').innerHTML = `You chose to tip: ${storedTip}%`;
-    const indexValue = tipValue.nodeValue;
-    tipValue.remove;
-} /// pick the right node to remove.
 
 
 function onBillChange() {
@@ -28,6 +24,8 @@ function onBillChange() {
 
 function onTipChange() {
     const inputValue = document.getElementById('total') as HTMLInputElement;
+
+    // make method to get chosen tip.
     const tipPercent = document.getElementById('selectedValue') as HTMLInputElement;
 
     const inputValueAsNumber: number = parseInt(inputValue.value);
@@ -70,3 +68,20 @@ function updateTotalPaid(inputValueAsNumber: number, tipPercentAsNumber: number)
 function saveIt(tipPercent: string) {
     localStorage.setItem('yourTipChoice', tipPercent);
 }
+
+
+
+
+
+
+
+
+
+
+const tenButton = document.getElementById('tenButton') as HTMLInputElement;
+const fifteenButton = document.getElementById('fifteenButton') as HTMLInputElement;
+const twentyButton = document.getElementById('twentyButton') as HTMLInputElement;
+
+tenButton.addEventListener('click', onTipChange);
+fifteenButton.addEventListener('click', onTipChange);
+twentyButton.addEventListener('click', onTipChange);
