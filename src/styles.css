@@ -8,11 +8,12 @@ h1 {
 }
 
 .error{
+    outline-color: red;
     background-color: red;
 }
 
 .normal{
-    background-color: blue;
+    
 }
 
 

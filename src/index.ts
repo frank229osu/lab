@@ -1,3 +1,5 @@
+import './styles.css';
+
 document.getElementById('total').oninput = onBillChange;
 
 const buttons = document.querySelectorAll('.btn') as NodeListOf<HTMLInputElement>;
@@ -28,11 +30,12 @@ function onBillChange() {
 
         const inputValue = document.getElementById('total') as HTMLInputElement;
         const inputValueAsNumber: number = parseInt(inputValue.value);
+        const totalInput = document.getElementById('total') as HTMLInputElement;
         if (isNaN(inputValueAsNumber)) {
             defaultZero();
-            let totalInput = document.getElementById('total') as HTMLInputElement;
             totalInput.className = 'error';
         } else {
+            totalInput.className = 'normal';
             updateBillAmount(inputValueAsNumber);
             updateTipPercent(tipAsNumber);
             updateTipAmount(inputValueAsNumber, tipAsNumber);
