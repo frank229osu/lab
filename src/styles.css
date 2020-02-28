@@ -7,6 +7,14 @@ h1 {
     background-color: grey;
 }
 
+.error{
+    background-color: red;
+}
+
+.normal{
+    background-color: blue;
+}
+
 
 
 

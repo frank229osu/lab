@@ -1,10 +1,26 @@
 document.getElementById('total').oninput = onBillChange;
+
+const buttons = document.querySelectorAll('.btn') as NodeListOf<HTMLInputElement>;
+
 const storedTip = localStorage.getItem('yourTipChoice');
+
 let tipAsNumber: number;
+
+const tenButton = document.getElementById('0.1') as HTMLInputElement;
+tenButton.addEventListener('click', tipTen);
+
+const fifteenButton = document.getElementById('0.15') as HTMLInputElement;
+fifteenButton.addEventListener('click', tipFifteen);
+
+const twentyButton = document.getElementById('0.2') as HTMLInputElement;
+twentyButton.addEventListener('click', tipTwenty);
 
 if (storedTip) {
     tipAsNumber = JSON.parse(storedTip);
-    onTipChange(tipAsNumber);
+    if (!isNaN(tipAsNumber)) {
+        onTipChange(tipAsNumber);
+        updateButtonStatus(storedTip);
+    }
 }
 
 function onBillChange() {
@@ -14,6 +30,8 @@ function onBillChange() {
         const inputValueAsNumber: number = parseInt(inputValue.value);
         if (isNaN(inputValueAsNumber)) {
             defaultZero();
+            let totalInput = document.getElementById('total') as HTMLInputElement;
+            totalInput.className = 'error';
         } else {
             updateBillAmount(inputValueAsNumber);
             updateTipPercent(tipAsNumber);
@@ -24,20 +42,24 @@ function onBillChange() {
 }
 
 function onTipChange(tip: number) {
-    const inputValue = document.getElementById('total') as HTMLInputElement;
+    if (isNaN(tip)) {
+        defaultZero();
+    } else {
+        const inputValue = document.getElementById('total') as HTMLInputElement;
 
-    const inputValueAsNumber: number = parseInt(inputValue.value);
+        const inputValueAsNumber: number = parseInt(inputValue.value);
 
-    updateChosenTip(tip);
-    updateTipPercent(tip);
-    saveIt(tip.toString());
+        updateChosenTip(tip);
+        updateTipPercent(tip);
+        saveIt(tip.toString());
 
-    if (inputValueAsNumber > 0) {
+        if (inputValueAsNumber > 0) {
 
-        updateBillAmount(inputValueAsNumber);
-        updateTipAmount(inputValueAsNumber, tip);
-        updateTotalPaid(inputValueAsNumber, tip);
+            updateBillAmount(inputValueAsNumber);
+            updateTipAmount(inputValueAsNumber, tip);
+            updateTotalPaid(inputValueAsNumber, tip);
 
+        }
     }
 }
 
@@ -72,86 +94,35 @@ function saveIt(tipPercent: string) {
     localStorage.setItem('yourTipChoice', tipPercent);
 }
 
-const tenButton = document.getElementById('tenButton') as HTMLInputElement;
-const fifteenButton = document.getElementById('fifteenButton') as HTMLInputElement;
-const twentyButton = document.getElementById('twentyButton') as HTMLInputElement;
-
-tenButton.addEventListener('click', tipTen);
-fifteenButton.addEventListener('click', tipFifteen);
-twentyButton.addEventListener('click', tipTwenty);
-
-const tipValue = null;
+function convertToDecimal(input: number) {
+    const output = input / 100;
+    return output;
+}
 
 function tipTen() {
-    this.tipValue = .1;
-    onTipChange(this.tipValue);
-    updateButtonStatus();
+    const decimalValue = convertToDecimal(parseInt(tenButton.value));
+    onTipChange(decimalValue);
+    updateButtonStatus(tenButton.id);
 }
 
 function tipFifteen() {
-    this.tipValue = .15;
-    onTipChange(this.tipValue);
+    const decimalValue = convertToDecimal(parseInt(fifteenButton.value));
+    onTipChange(decimalValue);
+    updateButtonStatus(fifteenButton.id);
 }
 
 function tipTwenty() {
-    this.tipValue = .2;
-    onTipChange(this.tipValue);
+    const decimalValue = convertToDecimal(parseInt(twentyButton.value));
+    onTipChange(decimalValue);
+    updateButtonStatus(twentyButton.id);
 }
 
-const buttons = document.querySelectorAll('.btn') as NodeListOf<HTMLInputElement>;
-
-function updateButtonStatus() {
-    const that = this as HTMLDivElement;
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import './styles.css';
-
-const secretNumber = Math.floor(Math.random() * 10);
-
-const squares = document.querySelectorAll('.square') as NodeListOf<HTMLDivElement>;
-
-console.log(squares);
-
-let currentSquare = 1;
-
-squares.forEach(sq => {
-    if (currentSquare === secretNumber) {
-        sq.dataset.secret = 'true';
-    }
-    currentSquare++;
-    sq.addEventListener('click', handleClick);
-});
-
-function handleClick() {
-    const that = this as HTMLDivElement;
-
-    if (that.dataset.secret) {
-        that.classList.add('winner');
-        that.removeEventListener('click', handleClick);
-        squares.forEach(sq => {
-            if (sq !== that) {
-                sq.classList.add('loser');
-            }
-        });
-    } else {
-        that.classList.add('loser');
-        that.removeEventListener('click', handleClick);
-    }
-
+function updateButtonStatus(input: string) {
+    buttons.forEach(x => {
+        if (x.id === input) {
+            x.setAttribute('disabled', 'disabled');
+        } else {
+            x.removeAttribute('disabled');
+        }
+    });
 }
