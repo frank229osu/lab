@@ -4,32 +4,49 @@ document.getElementById('total').oninput = onBillChange;
 
 const buttons = document.querySelectorAll('.btn') as NodeListOf<HTMLInputElement>;
 
-const storedTip = localStorage.getItem('yourTipChoice');
+let storedTipAsString: string;
+let storedTipAsNumber: number;
 
-let tipAsNumber: number;
+function accessStoredTip() {
+    storedTipAsString = localStorage.getItem('yourTipChoice');
+    if (storedTipAsString) {
+        storedTipAsNumber = JSON.parse(storedTipAsString);
+        if (!isNaN(storedTipAsNumber)) {
+            onTipChange(storedTipAsNumber);
+            updateButtonStatus(storedTipAsString);
+        }
+    }
+}
 
-const tenButton = document.getElementById('0.1') as HTMLInputElement;
-tenButton.addEventListener('click', tipTen);
+const tenButton = document.getElementById('10') as HTMLInputElement;
+tenButton.addEventListener('click', () =>
+    onTip(parseInt(tenButton.id, 10)),
+    false);
 
-const fifteenButton = document.getElementById('0.15') as HTMLInputElement;
-fifteenButton.addEventListener('click', tipFifteen);
+const fifteenButton = document.getElementById('15') as HTMLInputElement;
+fifteenButton.addEventListener('click', () =>
+    onTip(parseInt(fifteenButton.id, 10)),
+    false);
 
-const twentyButton = document.getElementById('0.2') as HTMLInputElement;
-twentyButton.addEventListener('click', tipTwenty);
+const twentyButton = document.getElementById('20') as HTMLInputElement;
+twentyButton.addEventListener('click', () =>
+    onTip(parseInt(twentyButton.id, 10)),
+    false);
 
-if (storedTip) {
-    tipAsNumber = JSON.parse(storedTip);
-    if (!isNaN(tipAsNumber)) {
-        onTipChange(tipAsNumber);
-        updateButtonStatus(storedTip);
+if (storedTipAsString) {
+    storedTipAsNumber = JSON.parse(storedTipAsString);
+    if (!isNaN(storedTipAsNumber)) {
+        onTipChange(storedTipAsNumber);
+        updateButtonStatus(storedTipAsString);
     }
 }
 
 function onBillChange() {
-    if (storedTip) {
+    accessStoredTip();
+    if (storedTipAsString) {
 
         const inputValue = document.getElementById('total') as HTMLInputElement;
-        const inputValueAsNumber: number = parseInt(inputValue.value);
+        const inputValueAsNumber: number = parseInt(inputValue.value, 10);
         const totalInput = document.getElementById('total') as HTMLInputElement;
         if (isNaN(inputValueAsNumber)) {
             defaultZero();
@@ -37,9 +54,9 @@ function onBillChange() {
         } else {
             totalInput.className = 'normal';
             updateBillAmount(inputValueAsNumber);
-            updateTipPercent(tipAsNumber);
-            updateTipAmount(inputValueAsNumber, tipAsNumber);
-            updateTotalPaid(inputValueAsNumber, tipAsNumber);
+            updateTipPercent(storedTipAsNumber);
+            updateTipAmount(inputValueAsNumber, storedTipAsNumber);
+            updateTotalPaid(inputValueAsNumber, storedTipAsNumber);
         }
     }
 }
@@ -50,7 +67,7 @@ function onTipChange(tip: number) {
     } else {
         const inputValue = document.getElementById('total') as HTMLInputElement;
 
-        const inputValueAsNumber: number = parseInt(inputValue.value);
+        const inputValueAsNumber: number = parseInt(inputValue.value, 10);
 
         updateChosenTip(tip);
         updateTipPercent(tip);
@@ -67,7 +84,7 @@ function onTipChange(tip: number) {
 }
 
 function updateChosenTip(tipPercentAsNumber: number) {
-    document.getElementById('chosenTip').innerHTML = `You chose to tip: ${tipPercentAsNumber * 100}%`;
+    document.getElementById('chosenTip').innerHTML = `You chose to tip: ${tipPercentAsNumber}%`;
 }
 
 function updateBillAmount(inputValueAsNumber: number) {
@@ -75,15 +92,15 @@ function updateBillAmount(inputValueAsNumber: number) {
 }
 
 function updateTipPercent(tipPercentAsNumber: number) {
-    document.getElementById('tipPercent').innerHTML = `Tip percent: ${tipPercentAsNumber * 100}%`;
+    document.getElementById('tipPercent').innerHTML = `Tip percent: ${tipPercentAsNumber}%`;
 }
 
 function updateTipAmount(inputValueAsNumber: number, tipPercentAsNumber: number) {
-    document.getElementById('tipAmount').innerHTML = `Amount of tip: $${tipPercentAsNumber * inputValueAsNumber}`;
+    document.getElementById('tipAmount').innerHTML = `Amount of tip: $${(tipPercentAsNumber / 100) * inputValueAsNumber}`;
 }
 
 function updateTotalPaid(inputValueAsNumber: number, tipPercentAsNumber: number) {
-    const totalValue = inputValueAsNumber + (inputValueAsNumber * tipPercentAsNumber);
+    const totalValue = inputValueAsNumber + (inputValueAsNumber * (tipPercentAsNumber / 100));
     document.getElementById('totalPaid').innerHTML = `Total to be paid: $${totalValue}`;
 }
 
@@ -97,27 +114,9 @@ function saveIt(tipPercent: string) {
     localStorage.setItem('yourTipChoice', tipPercent);
 }
 
-function convertToDecimal(input: number) {
-    const output = input / 100;
-    return output;
-}
-
-function tipTen() {
-    const decimalValue = convertToDecimal(parseInt(tenButton.value));
-    onTipChange(decimalValue);
-    updateButtonStatus(tenButton.id);
-}
-
-function tipFifteen() {
-    const decimalValue = convertToDecimal(parseInt(fifteenButton.value));
-    onTipChange(decimalValue);
-    updateButtonStatus(fifteenButton.id);
-}
-
-function tipTwenty() {
-    const decimalValue = convertToDecimal(parseInt(twentyButton.value));
-    onTipChange(decimalValue);
-    updateButtonStatus(twentyButton.id);
+function onTip(input: number) {
+    onTipChange(input);
+    updateButtonStatus(input.toString());
 }
 
 function updateButtonStatus(input: string) {

@@ -3,17 +3,15 @@ h1 {
 }
 
 
-.btn-tip{
-    background-color: grey;
+.btn{
+    background-color: lightblue ;
 }
+
+
 
 .error{
     outline-color: red;
     background-color: red;
-}
-
-.normal{
-    
 }
 
 
