@@ -7,17 +7,6 @@ const buttons = document.querySelectorAll('.btn') as NodeListOf<HTMLInputElement
 let storedTipAsString: string;
 let storedTipAsNumber: number;
 
-function accessStoredTip() {
-    storedTipAsString = localStorage.getItem('yourTipChoice');
-    if (storedTipAsString) {
-        storedTipAsNumber = JSON.parse(storedTipAsString);
-        if (!isNaN(storedTipAsNumber)) {
-            onTipChange(storedTipAsNumber);
-            updateButtonStatus(storedTipAsString);
-        }
-    }
-}
-
 const tenButton = document.getElementById('10') as HTMLInputElement;
 tenButton.addEventListener('click', () =>
     onTip(parseInt(tenButton.id, 10)),
@@ -33,26 +22,33 @@ twentyButton.addEventListener('click', () =>
     onTip(parseInt(twentyButton.id, 10)),
     false);
 
-if (storedTipAsString) {
-    storedTipAsNumber = JSON.parse(storedTipAsString);
-    if (!isNaN(storedTipAsNumber)) {
-        onTipChange(storedTipAsNumber);
-        updateButtonStatus(storedTipAsString);
+function accessStoredTip() {
+    storedTipAsString = localStorage.getItem('yourTipChoice');
+    if (storedTipAsString) {
+        storedTipAsNumber = JSON.parse(storedTipAsString);
+        if (!isNaN(storedTipAsNumber) && storedTipAsNumber !== null) {
+            onTipChange(storedTipAsNumber);
+            updateButtonStatus(storedTipAsString);
+        }
     }
 }
+
+accessStoredTip();
+
 
 function onBillChange() {
     accessStoredTip();
     if (storedTipAsString) {
-
         const inputValue = document.getElementById('total') as HTMLInputElement;
-        const inputValueAsNumber: number = parseInt(inputValue.value, 10);
-        const totalInput = document.getElementById('total') as HTMLInputElement;
-        if (isNaN(inputValueAsNumber)) {
+        if (inputValue.value === '') {
             defaultZero();
-            totalInput.className = 'error';
+            inputValue.className = 'normal';
+        } else if (isNaN(Number(inputValue.value))) {
+            defaultZero();
+            inputValue.className = 'error';
         } else {
-            totalInput.className = 'normal';
+            const inputValueAsNumber: number = parseInt(inputValue.value, 10);
+            inputValue.className = 'normal';
             updateBillAmount(inputValueAsNumber);
             updateTipPercent(storedTipAsNumber);
             updateTipAmount(inputValueAsNumber, storedTipAsNumber);
@@ -66,7 +62,6 @@ function onTipChange(tip: number) {
         defaultZero();
     } else {
         const inputValue = document.getElementById('total') as HTMLInputElement;
-
         const inputValueAsNumber: number = parseInt(inputValue.value, 10);
 
         updateChosenTip(tip);
@@ -74,11 +69,9 @@ function onTipChange(tip: number) {
         saveIt(tip.toString());
 
         if (inputValueAsNumber > 0) {
-
             updateBillAmount(inputValueAsNumber);
             updateTipAmount(inputValueAsNumber, tip);
             updateTotalPaid(inputValueAsNumber, tip);
-
         }
     }
 }
@@ -88,7 +81,7 @@ function updateChosenTip(tipPercentAsNumber: number) {
 }
 
 function updateBillAmount(inputValueAsNumber: number) {
-    document.getElementById('billAmount').innerHTML = `Bill Amount: $${inputValueAsNumber}`;
+    document.getElementById('billAmount').innerHTML = `Bill Amount: $${roundNumberTwoDecimalPlaces(inputValueAsNumber)}`;
 }
 
 function updateTipPercent(tipPercentAsNumber: number) {
@@ -96,12 +89,13 @@ function updateTipPercent(tipPercentAsNumber: number) {
 }
 
 function updateTipAmount(inputValueAsNumber: number, tipPercentAsNumber: number) {
-    document.getElementById('tipAmount').innerHTML = `Amount of tip: $${(tipPercentAsNumber / 100) * inputValueAsNumber}`;
+    const totalTipAmount = (tipPercentAsNumber / 100) * inputValueAsNumber;
+    document.getElementById('tipAmount').innerHTML = `Amount of tip: $${roundNumberTwoDecimalPlaces(totalTipAmount)}`;
 }
 
 function updateTotalPaid(inputValueAsNumber: number, tipPercentAsNumber: number) {
     const totalValue = inputValueAsNumber + (inputValueAsNumber * (tipPercentAsNumber / 100));
-    document.getElementById('totalPaid').innerHTML = `Total to be paid: $${totalValue}`;
+    document.getElementById('totalPaid').innerHTML = `Total to be paid: $${roundNumberTwoDecimalPlaces(totalValue)}`;
 }
 
 function defaultZero() {
@@ -127,4 +121,10 @@ function updateButtonStatus(input: string) {
             x.removeAttribute('disabled');
         }
     });
+}
+
+function roundNumberTwoDecimalPlaces(input: number) {
+    const inputAsString = input.toFixed(2);
+    return inputAsString;
+
 }
